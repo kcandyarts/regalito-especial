@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>un regalo para ti bebe.</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://i.pinimg.com/originals/06/83/e6/0683e6d7c78b3849b825ecaafa6d11b6.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8f8f8f;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Reproductor de YouTube oculto con la nueva canción y en bucle -->
+    <div id="youtube-audio-container" style="display:none;">
+        <iframe id="youtube-player" width="200" height="200" src="https://www.youtube.com/embed/u2AdJG-Yfxc?enablejsapi=1&autoplay=1&loop=1&playlist=u2AdJG-Yfxc" frameborder="0" allow="autoplay"></iframe>
+    </div>
+
+    <!-- TOP SECTION: Background with Relationship Stats -->
+    <header class="w-full pt-8 pb-16 px-4 text-center text-white relative">
+        <div class="max-w-sm mx-auto relative z-10">
+            <p class="uppercase tracking-widest text-xs font-semibold mb-2 drop-shadow" style="color: #cfcfcf;">I've known you for</p>
+            
+            <!-- Live Days Counter -->
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-1 drop-shadow-md">
+                <span id="days-count">...</span> Días
+            </h1>
+            
+            <!-- Current Formatted Date -->
+            <p id="current-date-str" class="text-sm font-medium mb-8 tracking-wide" style="color: #cfcfcf;"></p>
+
+            <!-- Couple Avatars & Heart -->
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <!-- Person 1 -->
+                <div class="flex flex-col items-center">
+                    <div class="relative">
+                        <img id="avatar-1" src="https://i.pinimg.com/736x/d2/b9/5a/d2b95a61ffdf88bc1597965ec520bef3.jpg" alt="Pareja 1" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-lg">
+                    </div>
+                    <div class="mt-2">
+                        <span id="name-1" contenteditable="true" class="font-semibold text-white text-base focus:outline-none focus:border-b border-white px-1">Candy</span>
+                    </div>
+                </div>
+
+                <!-- Heart Icon in Between (White) -->
+                <div class="text-white text-3xl animate-pulse pb-6">
+                    <i class="fa-solid fa-heart drop-shadow-md"></i>
+                </div>
+
+                <!-- Person 2 -->
+                <div class="flex flex-col items-center">
+                    <div class="relative">
+                        <img id="avatar-2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjz_uKsf57ScqpECZZCSL_dO5GQ1h_pTZzE2VXuv-ogmaL_Hp3DML475qJJu-ikF4XkNaEMVYGglECAhPoWqWYNrpWVDWMTPkEyFPJVTSgtepXqDTl01BxXi8Di21yycHiOk91u3oTbhRyBHYRvnBMWYbzE5QKQzez4P4S9esNez4wJPNNWqUpTow12LgNU/s1600/96b8586a31a7f3cefec3432d146338d2.jpg" alt="Pareja 2" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-lg">
+                    </div>
+                    <div class="mt-2">
+                        <span id="name-2" contenteditable="true" class="font-semibold text-white text-base focus:outline-none focus:border-b border-white px-1">zel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BOTTOM SECTION: Sliding White Card Container for Memories -->
+    <main class="flex-1 bg-white rounded-t-[35px] shadow-2xl -mt-8 px-4 sm:px-6 pt-6 pb-16 max-w-md w-full mx-auto relative z-20 flex flex-col">
+        <!-- Drag Handle / Title Bar -->
+        <div class="w-12 h-1.5 rounded-full mx-auto mb-6" style="background-color: #8f8f8f;"></div>
+        
+        <div class="flex justify-between items-center mb-6 px-1">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-book-open" style="color: #8f8f8f;"></i> Nuestra Historia
+            </h2>
+        </div>
+
+        <!-- Memories List Container -->
+        <div id="memories-container" class="space-y-3.5 flex-1 overflow-auto max-h-[400px] p-1">
+            <!-- Dynamic Cards inserted via JavaScript -->
+        </div>
+    </main>
+
+    <!-- MODAL: View Memory Details -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-xs sm:max-w-sm w-full p-6 shadow-2xl relative transform transition-all max-h-[85vh] overflow-auto">
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition z-10">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="modal-img-container" class="mb-4 rounded-2xl overflow-hidden h-44 bg-gray-50 flex items-center justify-center shrink-0">
+                <img id="modal-img" src="" alt="Momento" class="w-full h-full object-cover">
+            </div>
+            <span id="modal-date" class="text-xs font-bold uppercase tracking-wider block mb-1" style="color: #8f8f8f;"></span>
+            <h3 id="modal-title" class="text-lg font-bold text-gray-800 mb-2"></h3>
+            <div class="overflow-x-auto max-w-full">
+                <p id="modal-desc" class="text-gray-600 text-sm leading-relaxed mb-4 min-w-[200px]"></p>
+            </div>
+            <div id="modal-footer-action"></div>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame API Script -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        // Start date: October 8, 2024
+        const startDate = new Date(2024, 9, 8);
+
+        let memories = [
+            {
+                id: 1,
+                title: "El inicio de todo...",
+                date: "08 Oct 2024",
+                desc: "Hace 3 años atras, jamas me imagine que en esa noche oscura para mi, me encontrarias con la persona que más amaria en este mundo.<br><br> Bebe, en serio que cuando te he dicho que has salvado mis ganas de vivir, lo digo con todas las fuerzas que tengo. Fuistes el unico capaz de escucharme aquella noche donde pense que no tenia a nadie más, fuistes mi acompañante en ese dia donde cuestionaba mi propia existencia; me hicistes sentir vista por primera vez.<br><br> La verdad siempre he visto que lo nuestro fue algo muy unico, porque en la ciscunstancia en la que te conoci no es usual, o sea bebe, nos conocimos en un juego de ambiente y tuvistes la paciencia de escucharme y aconsejarme, incluso cuando tu tambien te sentias solo.<br><br> Siento que eso fue lo mejor de todo, que pudimos congeniar entre millones de personas en este mundo.",
+                icon: "fa-star",
+                image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHyaarqhAPqEWBuUnuCUJB-JX3F2HqNW2U6siWAxjZHZKwcXK6Iwp-jZemsLOLO4wQ-KfY8VDsgXTv2AemK6FIBXmF9evU9bGQqgHy7hocx7_QedYTNN74YaLlThlGbb_ekjnM-mwzFsGYHAX6Vu28XQUQUI2KRnuNuN7mI1dVh9uCkQ0Gt8uD8fTOm6ZH/s1600/IMG-20240808-WA0095.jpg",
+                isSpecial: false
+            },
+            {
+                id: 2,
+                title: "nuestra primera llamada",
+                date: "15 Nov 2024",
+                desc: "Un lo recuerdo como si hubiera sido ayer. Recuerdo que estaba nerviosa al respecto, porque seria mi primera vez escuchando tu voz y tu la mia, por discord; la verdad estaba ansiosa en ese momento, porque genuinamente me estaba gustando muchisimo hablarte.<br><br> Y cuando porfin pudimos estar en llamada, fue una sorpresa y alivio para mi ver que nos estabamos llevando bastante bien, como si nos hablaramos desde hace mucho tiempo, era tan natural todo el momento que decidi abrirme contigo contandote algunos traumas jajajaj. Recuerdo que despues de haberte comentado eso, tenia panico que me dejaras de hablar, porque te pareceria raro, pero no; Fue todo lo contrario, tu estabas bastante comodo al escucharme y yo porfin me sentia querida. <br><br> Fue sorprendente esa llamada, ya que supe más de ti, y desde la primera vez, algo en ti me llamo la atención. Es loco decirlo de esta forma, porque aja que raios podria yo sentir a 4.994 kilometros de distancia x alguien no habia visto jamas, pero en tu caso si lo senti muy apecho nuestra conexión. <br><br>Confieso que esa fueron de las primeras cosas que me impresiono de ti, tu confiaza al hablar, tus gustos y tu sentido del humor; En serio no miento que la primera vez que hablamos, queria estar horas y horas escuchandote y escribiendote de lo tan bien que me hacias sentir. Me sorprendio muchisimo cuando me comentastes que casi no tenias con quien hablar, cuando en el fondo de mi mente me decia «aah este chico es tan lindo, debe de tener mucha gente con quien estar» , me dejo muy sorprendida darme cuenta que hasta en ese aspecto eramos iguales. ",
+                icon: "fa-phone",
+                image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgnn7VCfWASyDPGZpZ0oJ7ScEem16XAxe4RWoHuP_Zi5JZjmO2-mRRfaWaEKf8g0vwxkXxZV0YnBPLSUGD3RuNowE8QBtsh5uRTGqTCL-CYjDd1I_e5C88UOtwNIaJQcTcxd-j9sxHl1eFSn4o1aD7wHPi1Eyt1aGqqTRdsNcd95fPQebEwsSprJUsW_WB-/s1600/Screenshot_2023-11-26-17-15-47-987_com.discord.jpg",
+                isSpecial: false
+            },
+            {
+                id: 3,
+                title: "24/7 juntos",
+                date: "20 Jul 2025",
+                desc: "¡Dios mio!, en este momento recuerdo de que literal nos escribiamos todos los dias, desde la mañana hasta la noche. Nuestro tema de conversación nunca han parado hasta el dia de hoy, que realmente jamas habia experimentado todo esto con alguien, y se siente tan bien que tu tambien estes igual que yo en ese aspecto.<br><br> Es muy, pero muy adictivo estar contigo amor, disfrute de cada instante a tu lado y siento que ese es lo que mas nos hace inseparables del otro, por todo lo que podemos ser con el otro y a su vez, seguir descubriendo más de cada uno como individuos. Eso sin duda es lo mas bonito que he podido tener contigo.",
+                icon: "fa-message",
+                image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjj75qX2J_SWPlIDYqR0Izrhjl7xTPCTNoJHUyFIP2M2a7rQ-VGCnee9qdYx_ygDCn_LB0OJZmy9TOyo3c0uSU73MIsE7ERvWX5bDeNpgcvqbZJjO8T2hAKDRtWVCb-fMh_XsOuwsUN2nvVxa0n0KQwidnrf_NySXpz6qABl9QWiNyaGi-ZYmKqD-Zn4T3K/s1600/IMG_20231027_004739.jpg",
+                isSpecial: false
+            },
+            {
+                id: 4,
+                title: "Nuestro presente.",
+                date: "2026",
+                desc: "Me sorprende tanto todo lo que hemos pasado juntos cariño, no te miento que en el pasado si vi este dia muy lejano al respecto, tenia mucha insertidumbre de lo que podria pasar, pero ahora me siento más segura pensando en un futuro a tu lado. <br><br> Es muy lindo como todo incio siendo una amistad sincera, y tan pero tan profunda que no se podia quedar en un te quiero, si no en algo más. En un Te amo con toda mi alma y vida, con que a pesar de las dificultades que atravesamos ambos, jamás nos soltamos la mano.<br><br> En serio bebe gracias por estar conmigo en estos 3 años junto a mi, por ti siento más ganas de vivir, por ti siempre quiero superarme cada vez más, y espero que tu por mi tambien sientas la misma motivación. <br><br> Y espero que tambien este detallito que haya gustado mucho, en serio te amo demasiadoooo, que bueno creo que lo siguiente que esta en el boton de abajo lo define mejor que yo.<br><br> att: jhenny.",
+                icon: "fa-heart",
+                image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjQsnYHSjOSmu-9tdAeL9AGIQIfCiwJHNhSWLCU9J7y66d8wIpjqQ4JgSBDOvWn7j2Vbzo3MGcdaY-xfqGpSyqYm-PwpmGfOjsQuDa7P0lKnvRwYRRO0Qg6h-K-eqY_isYvqYEZlniaTSAAKC1rRrU7k304dTm_53Xg_968CMujCxiuzZb9UnHnTZWgrGhJ/s1600/IMG_1129.jpg",
+                isSpecial: true,
+                linkUrl: "https://youtu.be/wgxthmtknfo?si=Ck-c629wkNkAj-dR"
+            }
+        ];
+
+        let player;
+
+        // YouTube API Callbacks
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player('youtube-player', {
+                events: {
+                    'onReady': (event) => {
+                        event.target.setVolume(30); // Volumen semi-bajo (30%)
+                        event.target.playVideo();
+                    }
+                }
+            });
+        }
+
+        function updateDaysCounter() {
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('days-count').innerText = diffDays;
+        }
+
+        function updateCurrentDateString() {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            const today = new Date();
+            let dateStr = today.toLocaleDateString('es-ES', options);
+            document.getElementById('current-date-str').innerText = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        }
+
+        function renderMemories() {
+            const container = document.getElementById('memories-container');
+            container.innerHTML = '';
+
+            memories.forEach(memory => {
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-3.5 rounded-2xl border transition cursor-pointer group";
+                card.style.backgroundColor = "rgba(207, 207, 207, 0.15)";
+                card.style.borderColor = "#8f8f8f";
+                
+                card.onmouseover = () => card.style.backgroundColor = "rgba(207, 207, 207, 0.3)";
+                card.onmouseout = () => card.style.backgroundColor = "rgba(207, 207, 207, 0.15)";
+
+                card.onclick = () => openDetailModal(memory);
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3.5 overflow-hidden">
+                        <div class="w-11 h-11 shrink-0 rounded-2xl text-white flex items-center justify-center text-base transition group-hover:scale-105" style="background-color: #8f8f8f;">
+                            <i class="fa-solid ${memory.icon}"></i>
+                        </div>
+                        <div class="truncate">
+                            <h3 class="font-bold text-gray-800 text-sm sm:text-base truncate">${memory.title}</h3>
+                            <p class="text-xs text-gray-500 font-medium">${memory.date}</p>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 shrink-0 rounded-full bg-white flex items-center justify-center transition group-hover:bg-[#8f8f8f] group-hover:text-white ml-2" style="color: #8f8f8f;">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openDetailModal(memory) {
+            document.getElementById('modal-title').innerText = memory.title;
+            document.getElementById('modal-date').innerText = memory.date;
+            document.getElementById('modal-desc').innerHTML = memory.desc;
+            document.getElementById('modal-img').src = memory.image;
+
+            const footerContainer = document.getElementById('modal-footer-action');
+            
+            if (memory.isSpecial) {
+                footerContainer.innerHTML = `
+                    <a href="${memory.linkUrl}" target="_blank" class="text-white font-semibold py-2.5 px-4 rounded-2xl transition text-sm flex items-center justify-center gap-2 mt-2" style="background-color: #8f8f8f;" onmouseover="this.style.backgroundColor='#787878'" onmouseout="this.style.backgroundColor='#8f8f8f'">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver enlace especial
+                    </a>
+                `;
+            } else {
+                footerContainer.innerHTML = '';
+            }
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            updateDaysCounter();
+            updateCurrentDateString();
+            renderMemories();
+        }
+    </script>
+</body>
+</html>
